@@ -5,8 +5,12 @@ namespace Boangri\BlogApi\Model;
 use Boangri\BlogApi\Api\ArticleRepositoryInterface;
 use Boangri\BlogApi\Api\Data\ArticleInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\Exception\AlreadyExistsException;
-use SY\Blog\Model\ResourceModel\Article;
+use Magento\Framework\Exception\NoSuchEntityException;
+use SY\Blog\Model\Article;
+use SY\Blog\Model\ArticleFactory;
+use SY\Blog\Model\ResourceModel\Article as ResourceModel;
 use SY\Blog\Model\ResourceModel\Article\CollectionFactory;
 
 class ArticleRepository implements ArticleRepositoryInterface
@@ -16,21 +20,27 @@ class ArticleRepository implements ArticleRepositoryInterface
      */
     private $collectionFactory;
     /**
-     * @var Article
+     * @var ResourceModel
      */
     private $resourceModel;
+    /**
+     * @var ArticleFactory
+     */
+    private $articleFactory;
 
     public function __construct(
         CollectionFactory $collectionFactory,
-        Article $resourceModel
+        ResourceModel $resourceModel,
+        ArticleFactory $articleFactory
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->resourceModel = $resourceModel;
+        $this->articleFactory = $articleFactory;
     }
 
     /**
      * @param SearchCriteriaInterface $searchCriteria
-     * @return \Boangri\BlogApi\Api\Data\ArticleSearchResultsInterface|void
+     * @return DataObject[]
      */
     public function getList(SearchCriteriaInterface $searchCriteria)
     {
@@ -39,11 +49,18 @@ class ArticleRepository implements ArticleRepositoryInterface
 
     /**
      * @param int $articleId
-     * @return ArticleInterface|void
+     * @return Article
+     * @throws NoSuchEntityException
      */
     public function getById(int $articleId)
     {
-        $this->resourceModel->load($articleId);
+        $article = $this->articleFactory->create();
+        $article->load($articleId);
+        if (!$article->getId()) {
+            throw new NoSuchEntityException(__('The Article with the "%1" ID doesn\'t exist.', $articleId));
+        }
+
+        return $article;
     }
 
     /**
@@ -53,12 +70,12 @@ class ArticleRepository implements ArticleRepositoryInterface
      */
     public function deleteById(int $articleId)
     {
-        $this->resourceModel->delete($articleId);
+        $this->resourceModel->delete($this->getById($articleId));
     }
 
     /**
      * @param ArticleInterface $article
-     * @return Article
+     * @return ResourceModel
      * @throws AlreadyExistsException
      */
     public function save(ArticleInterface $article)
