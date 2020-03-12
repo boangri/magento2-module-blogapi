@@ -1,24 +1,30 @@
 <?xml version="1.0"?>
 <routes>
-    <route url="/V1/sy_blog/articles" method="GET">
+    <route url="/V1/sy_blog/search" method="GET">
         <service class="Boangri\BlogApi\Api\ArticleRepositoryInterface" method="getList"/>
         <resources>
             <resource ref="anonymous"/>
         </resources>
     </route>
-    <route url="/V1/sy_blog/article" method="GET">
+    <route url="/V1/sy_blog/:articleId" method="GET">
         <service class="Boangri\BlogApi\Api\ArticleRepositoryInterface" method="getById"/>
         <resources>
             <resource ref="self"/>
         </resources>
     </route>
-    <route url="/V1/sy_blog/new" method="POST">
+    <route url="/V1/sy_blog" method="POST">
         <service class="Boangri\BlogApi\Api\ArticleRepositoryInterface" method="save"/>
         <resources>
             <resource ref="Magento_Backend::admin"/>
         </resources>
     </route>
-    <route url="/V1/sy_blog/delete" method="DELETE">
+    <route url="/V1/sy_blog/:articleId" method="PUT">
+        <service class="Boangri\BlogApi\Api\ArticleRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="Magento_Backend::admin"/>
+        </resources>
+    </route>
+    <route url="/V1/sy_blog/:articleId" method="DELETE">
         <service class="Boangri\BlogApi\Api\ArticleRepositoryInterface" method="deleteById"/>
         <resources>
             <resource ref="Magento_Backend::admin"/>
