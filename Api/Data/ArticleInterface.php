@@ -45,10 +45,10 @@ interface ArticleInterface
     public function getActive();
 
     /**
-     * @param int $id
+     * @param mixed $id
      * @return $this
      */
-    //public function setId(int $id);
+    public function setId($id);
 
     /**
      * @param string $image

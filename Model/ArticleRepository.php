@@ -113,11 +113,12 @@ class ArticleRepository implements ArticleRepositoryInterface
 
     /**
      * @param ArticleInterface $article
-     * @return ResourceModel
+     * @return ArticleInterface
      * @throws AlreadyExistsException
      */
     public function save(ArticleInterface $article)
     {
-        return $this->resourceModel->save($article);
+        $this->resourceModel->save($article);
+        return $article;
     }
 }

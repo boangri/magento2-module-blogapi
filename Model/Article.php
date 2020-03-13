@@ -71,14 +71,14 @@ class Article extends \SY\Blog\Model\Article implements ArticleInterface
     }
 
     /**
-     * @param int $id
+     * @param mixed $id
      * @return $this
      */
-//    public function setId(int $id)
-//    {
-//        $this->setdata('id', $id);
-//        return $this;
-//    }
+    public function setId($id)
+    {
+        $this->setdata('id', $id);
+        return $this;
+    }
 
     /**
      * @param string $image
