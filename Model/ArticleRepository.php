@@ -5,7 +5,6 @@ namespace Boangri\BlogApi\Model;
 use Boangri\BlogApi\Api\ArticleRepositoryInterface;
 use Boangri\BlogApi\Api\Data\ArticleInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\DataObject;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use SY\Blog\Model\Article;
@@ -40,7 +39,7 @@ class ArticleRepository implements ArticleRepositoryInterface
 
     /**
      * @param SearchCriteriaInterface $searchCriteria
-     * @return DataObject[]
+     * @return ArticleInterface[]
      */
     public function getList(SearchCriteriaInterface $searchCriteria)
     {
