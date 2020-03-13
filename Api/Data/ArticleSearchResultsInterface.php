@@ -2,6 +2,7 @@
 
 namespace Boangri\BlogApi\Api\Data;
 
+use Boangri\BlogApi\Model\Article;
 use Magento\Framework\Api\SearchCriteriaInterface;
 
 interface ArticleSearchResultsInterface
@@ -9,12 +10,12 @@ interface ArticleSearchResultsInterface
     /**
      * Get pages list.
      *
-     * @return ArticleInterface[]
+     * @return Article[]
      */
     public function getItems();
 
     /**
-     * @param ArticleInterface[] $items
+     * @param Article[] $items
      * @return $this
      */
     public function setItems(array $items);

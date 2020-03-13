@@ -9,7 +9,7 @@ use Magento\Framework\Api\SearchCriteriaInterface;
 class ArticleSearchResults implements ArticleSearchResultsInterface
 {
     /**
-     * @var ArticleInterface[]
+     * @var Article[]
      */
     private $items = [];
     /**
@@ -22,7 +22,7 @@ class ArticleSearchResults implements ArticleSearchResultsInterface
     private $totalCount;
 
     /**
-     * @return ArticleInterface[]
+     * @return Article[]
      */
     public function getItems()
     {
@@ -30,7 +30,7 @@ class ArticleSearchResults implements ArticleSearchResultsInterface
     }
 
     /**
-     * @param ArticleInterface[] $items
+     * @param Article[] $items
      * @return $this
      */
     public function setItems(array $items)

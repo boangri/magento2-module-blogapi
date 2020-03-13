@@ -4,12 +4,12 @@ namespace Boangri\BlogApi\Model;
 
 use Boangri\BlogApi\Api\ArticleRepositoryInterface;
 use Boangri\BlogApi\Api\Data\ArticleInterface;
+use Boangri\BlogApi\Api\Data\ArticleSearchResultsInterface;
 use Boangri\BlogApi\Api\Data\ArticleSearchResultsInterfaceFactory;
 use Magento\Framework\Api\SearchCriteriaInterface;
-use Magento\Framework\Api\SearchResultsInterface;
+use Magento\Framework\Api\SearchResultsInterfaceFactory;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Boangri\BlogApi\Model\ArticleFactory;
 use SY\Blog\Model\ResourceModel\Article as ResourceModel;
 use SY\Blog\Model\ResourceModel\Article\CollectionFactory;
 
@@ -27,12 +27,15 @@ class ArticleRepository implements ArticleRepositoryInterface
      * @var ArticleFactory
      */
     private $articleFactory;
+    /**
+     * @var ArticleSearchResultsInterfaceFactory
+     */
     private $searchResultsFactory;
 
     public function __construct(
         CollectionFactory $collectionFactory,
         ResourceModel $resourceModel,
-        ArticleSearchResultsInterfaceFactory $searchResultsFactory,
+        SearchResultsInterfaceFactory $searchResultsFactory,
         ArticleFactory $articleFactory
     ) {
         $this->collectionFactory = $collectionFactory;
@@ -78,7 +81,8 @@ class ArticleRepository implements ArticleRepositoryInterface
         $collection->setPageSize($searchCriteria->getPageSize());
         $objects = [];
         foreach ($collection as $objectModel) {
-            $objects[] = $objectModel;
+            //$objects[] = $objectModel;
+            $objects[] = $this->articleFactory->create()->load($objectModel->getId());
         }
         $searchResults->setItems($objects);
 
