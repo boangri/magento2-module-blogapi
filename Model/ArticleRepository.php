@@ -4,11 +4,12 @@ namespace Boangri\BlogApi\Model;
 
 use Boangri\BlogApi\Api\ArticleRepositoryInterface;
 use Boangri\BlogApi\Api\Data\ArticleInterface;
+use Boangri\BlogApi\Api\Data\ArticleSearchResultsInterfaceFactory;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\Api\SearchResultsInterface;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use SY\Blog\Model\Article;
-use SY\Blog\Model\ArticleFactory;
+use Boangri\BlogApi\Model\ArticleFactory;
 use SY\Blog\Model\ResourceModel\Article as ResourceModel;
 use SY\Blog\Model\ResourceModel\Article\CollectionFactory;
 
@@ -26,24 +27,62 @@ class ArticleRepository implements ArticleRepositoryInterface
      * @var ArticleFactory
      */
     private $articleFactory;
+    private $searchResultsFactory;
 
     public function __construct(
         CollectionFactory $collectionFactory,
         ResourceModel $resourceModel,
+        ArticleSearchResultsInterfaceFactory $searchResultsFactory,
         ArticleFactory $articleFactory
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->resourceModel = $resourceModel;
         $this->articleFactory = $articleFactory;
+        $this->searchResultsFactory = $searchResultsFactory;
     }
 
     /**
      * @param SearchCriteriaInterface $searchCriteria
-     * @return ArticleInterface[]
+     * @return SearchResultsInterface
      */
     public function getList(SearchCriteriaInterface $searchCriteria)
     {
-        return $this->collectionFactory->create()->getItems();
+        /** @var SearchResultsInterface $searchResults */
+        $searchResults = $this->searchResultsFactory->create();
+        $searchResults->setSearchCriteria($searchCriteria);
+        $collection = $this->collectionFactory->create();
+        foreach ($searchCriteria->getFilterGroups() as $filterGroup) {
+            $fields = [];
+            $conditions = [];
+            foreach ($filterGroup->getFilters() as $filter) {
+                $condition = $filter->getConditionType() ?? 'eq';
+                $fields[] = $filter->getField();
+                $conditions[] = [$condition => $filter->getValue()];
+            }
+            if ($fields) {
+                $collection->addFieldToFilter($fields, $conditions);
+            }
+        }
+        $searchResults->setTotalCount($collection->getSize());
+        $sortOrders = $searchCriteria->getSortOrders();
+        if ($sortOrders) {
+            /** @var SortOrder $sortOrder */
+            foreach ($sortOrders as $sortOrder) {
+                $collection->addOrder(
+                    $sortOrder->getField(),
+                    ($sortOrder->getDirection() == SortOrder::SORT_ASC) ? 'ASC' : 'DESC'
+                );
+            }
+        }
+        $collection->setCurPage($searchCriteria->getCurrentPage());
+        $collection->setPageSize($searchCriteria->getPageSize());
+        $objects = [];
+        foreach ($collection as $objectModel) {
+            $objects[] = $objectModel;
+        }
+        $searchResults->setItems($objects);
+
+        return $searchResults;
     }
 
     /**
@@ -73,11 +112,11 @@ class ArticleRepository implements ArticleRepositoryInterface
     }
 
     /**
-     * @param Article $article
+     * @param ArticleInterface $article
      * @return ResourceModel
      * @throws AlreadyExistsException
      */
-    public function save(Article $article)
+    public function save(ArticleInterface $article)
     {
         return $this->resourceModel->save($article);
     }

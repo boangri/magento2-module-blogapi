@@ -48,7 +48,7 @@ interface ArticleInterface
      * @param int $id
      * @return $this
      */
-    public function setId(int $id);
+    //public function setId(int $id);
 
     /**
      * @param string $image
