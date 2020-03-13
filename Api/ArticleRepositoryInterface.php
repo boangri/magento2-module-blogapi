@@ -3,10 +3,11 @@
 namespace Boangri\BlogApi\Api;
 
 use Boangri\BlogApi\Api\Data\ArticleInterface;
-use Boangri\BlogApi\Api\Data\ArticleSearchResultsInterface;
 use Magento\Framework\Api\SearchCriteriaInterface;
+use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
+use SY\Blog\Model\Article;
 
 interface ArticleRepositoryInterface
 {
@@ -14,7 +15,7 @@ interface ArticleRepositoryInterface
      * Retrieve articles matching the specified criteria.
      *
      * @param SearchCriteriaInterface $searchCriteria
-     * @return ArticleSearchResultsInterface
+     * @return DataObject[]
      * @throws LocalizedException
      */
     public function getList(SearchCriteriaInterface $searchCriteria);
@@ -41,9 +42,9 @@ interface ArticleRepositoryInterface
     /**
      * Save article.
      *
-     * @param ArticleInterface $article
+     * @param Article $article
      * @return ArticleInterface
      * @throws LocalizedException
      */
-    public function save(ArticleInterface $article);
+    public function save(Article $article);
 }
